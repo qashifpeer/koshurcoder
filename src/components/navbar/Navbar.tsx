@@ -12,8 +12,8 @@ const Navbar = () => {
   const handleClick = () => setToggle(!toggle);
 
   return (
-    <header className="bg-slate-900 text-slate-100">
-      <nav className="px-4 relative bg-slate-900 text-slate-100 flex justify-between items-center h-16 max-w-6xl mx-auto z-40 shadow-xl transition-all duration-500">
+    <header className="bg-background/50  sticky top-0 backdrop-blur">
+      <nav className="px-4 relative  text-primary flex justify-between items-center h-16 max-w-6xl mx-auto z-40 shadow-xl transition-all duration-500">
         <Link href="/">
           <div className="flex items-end">
             <Image
@@ -35,7 +35,7 @@ const Navbar = () => {
         {/* Mobile and Desktop Navigation */}
         <div
           className={`transition-left duration-300 ease-in-out flex flex-col justify-start items-center py-16 absolute w-[80%] max-lg:h-screen top-12
-            lg:static lg:flex-row lg:py-0 lg:justify-end lg:space-x-8 lg:px-8 bg-slate-900
+            lg:static lg:flex-row lg:py-0 lg:justify-end lg:space-x-8 lg:px-8 
             ${toggle ? "left-0 pointer-events-auto z-40" : "-left-full pointer-events-none z-30"}
             lg:pointer-events-auto`}
         >
