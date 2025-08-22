@@ -5,6 +5,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Head from "next/head";
 import { portableTextComponents } from "@/lib/portableTextComponents";
+import type { PortableTextBlock } from "@portabletext/types";
+
 
 // Types
 interface RecentPost {
@@ -30,7 +32,7 @@ interface Author {
 interface BlogPostData {
   slug: string;
   title: string;
-  content: any; // if you have a strong type for PortableText, replace `any`
+  content: PortableTextBlock[];
   shortDescription?: string;
   imageUrl: string;
   altFtImg: string;
