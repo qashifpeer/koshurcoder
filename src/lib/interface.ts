@@ -1,68 +1,42 @@
-interface Author {
-    _id: string;
-    name: string;
-    slug: string;
-    image: any;
-  }
-  
-  interface Category {
-    _id: string;
-    name: string;
-    slug : {current: string}
-  }
+import type { PortableTextBlock } from "@portabletext/types";
 
-  interface Place {
-    _id: string;
-    name: string;
-    slug : {current: string}
-  }
+export interface SanityImage {
+  asset: {
+    _ref: string;
+    _type: "reference";
+    url?: string;
+  };
+  alt?: string;
+}
 
-  
-  interface Post {
-    _id: string;
-    title: string;
-    shortDescription: string;
-    slug: {current: string};
-    imageUrl: string;
-    altFtImg: string;
-    publishedAt: string;
-    body: string;
-    author: Author;
-    categories: Category[];
-    // place: Place[];
-    content: any;
-  }
+export interface Author {
+  _id: string;
+  name: string;
+  slug: string; // if actually { current: string } in Sanity, change this
+  image: SanityImage;
+}
 
-  interface FetchedData {
-    _id: string;
-    title: string;
-    shortDescription: string;
-    slug: string;
-    imageUrl: string;
-    altFtImg: string;
-    publishedAt: string;
-    body: string;
-    author: Author;
-    categories: Category[];
-    // place: Place[];
-    content: any;
-  }
+export interface Category {
+  _id: string;
+  name: string;
+  slug: {
+    current: string;
+  };
+}
 
-  interface PostType {
-    _id: string;
-    title: string;
-    shortDescription: string;
-    slug: string;
-    imageUrl: string;
-    altFtImg: string;
-    publishedAt: string;
-    body: string;
-    author: Author;
-    categories: Category[];
-    // place: Place[];
-    content: any;
+export interface Post {
+  _id: string;
+  title: string;
+  shortDescription: string;
+  slug: { current: string };
+  imageUrl: string;
+  altFtImg: string;
+  publishedAt: string;
+  body: string;
+  author: Author;
+  categories?: Category[];
+  content: PortableTextBlock[];
+}
 
-  }
-  
-  
-  
+export type PostType = Post;
+export type FetchedData = Post;

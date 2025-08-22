@@ -1,6 +1,7 @@
 'use client'
 import Image from "next/image";
 import Link from "next/link";
+import type { PostType } from "@/lib/interface";
 
 interface Props {
   postData: PostType;
