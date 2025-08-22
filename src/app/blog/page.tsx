@@ -1,8 +1,8 @@
-import { client, getData } from "@/lib/client";
+import { getData } from "@/lib/client";
 import { BlogCard } from "@/components";
 import type { Metadata } from "next";
-import Head from "next/head";
-import Link from "next/link";
+import type { PostType } from "@/lib/interface"
+
 
 // Metadata for SEO
 export const metadata: Metadata = {

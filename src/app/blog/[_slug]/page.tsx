@@ -4,11 +4,45 @@ import Image from "next/image";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Head from "next/head";
-import Link from "next/link";
 import { portableTextComponents } from "@/lib/portableTextComponents";
 
+// Types
+interface RecentPost {
+  title: string;
+  slug: string;
+  imageUrl: string;
+}
+
+interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+interface Author {
+  _id: string;
+  name: string;
+  slug: string;
+  authorImgUrl: string;
+  altAuthorImg?: string;
+}
+
+interface BlogPostData {
+  slug: string;
+  title: string;
+  content: any; // if you have a strong type for PortableText, replace `any`
+  shortDescription?: string;
+  imageUrl: string;
+  altFtImg: string;
+  author: Author;
+  publishedAt: string;
+  updatedAt?: string;
+  excerpt?: string;
+  categories?: Category[];
+}
+
 // Get recent posts excluding current
-async function getRecentPosts(currentSlug: string) {
+async function getRecentPosts(currentSlug: string): Promise<RecentPost[]> {
   const query = `
     *[_type=='post' && slug.current != '${currentSlug}'] | order(publishedAt desc)[0...5] {
       title,
@@ -16,12 +50,12 @@ async function getRecentPosts(currentSlug: string) {
       'imageUrl': featureImage.asset->url
     }
   `;
-  const posts = await client.fetch(query);
+  const posts: RecentPost[] = await client.fetch(query);
   return posts;
 }
 
 // Fetch single blog post data
-async function getSinglePost(slug: string) {
+async function getSinglePost(slug: string): Promise<BlogPostData | null> {
   const query = `
     *[_type=='post' && slug.current == '${slug}']{
       'slug': slug.current,
@@ -47,9 +81,8 @@ async function getSinglePost(slug: string) {
         'slug': slug.current
       }, 
     }[0]`;
-  const data = await client.fetch(query);
-  // console.log("data from slug",data)
-  return data;
+  const data: BlogPostData = await client.fetch(query);
+  return data || null;
 }
 
 // Metadata for SEO
@@ -59,9 +92,9 @@ export async function generateMetadata({
   params: { _slug: string };
 }): Promise<Metadata> {
   const data = await getSinglePost(params._slug);
-  const url = `https://www.nuzhakashmir.com/blog/${data.slug}`;
-
   if (!data) return notFound();
+
+  const url = `https://www.nuzhakashmir.com/blog/${data.slug}`;
 
   return {
     title: `${data.title} - Nuzha Kashmir`,
@@ -73,7 +106,7 @@ export async function generateMetadata({
     openGraph: {
       title: data.title,
       description: data.shortDescription,
-      url: `https://www.nuzhakashmir.com/blog/${data.slug}`,
+      url,
       images: [{ url: data.imageUrl, width: 800, height: 600 }],
       type: "article",
     },
@@ -89,14 +122,12 @@ export async function generateMetadata({
 // Blog Post Page
 const BlogPost = async ({ params }: { params: { _slug: string } }) => {
   const data = await getSinglePost(params._slug);
-  const recentPosts = await getRecentPosts(params._slug);
-  console.log("PortableText value: ", data.content);
-
   if (!data) return notFound();
+
+  const recentPosts = await getRecentPosts(params._slug);
 
   return (
     <section className="max-w-7xl mx-auto px-4 flex flex-col gap-10 justify-center items-center pt-4 ">
-      {/* MAIN CONTENT */}
       <div className="">
         <Head>
           <title>{data.title} - Nuzha Kashmir</title>
@@ -112,27 +143,25 @@ const BlogPost = async ({ params }: { params: { _slug: string } }) => {
           <meta name="twitter:description" content={data.shortDescription} />
           <meta name="twitter:image" content={data.imageUrl} />
         </Head>
-        {/* title of the post */}
-        <h1 className="text-3xl font-extrabold mb-4">{data?.title}</h1>
+
+        <h1 className="text-3xl font-extrabold mb-4">{data.title}</h1>
 
         <Image
-          src={data?.imageUrl}
+          src={data.imageUrl}
           priority
           alt="featured"
           width={800}
           height={800}
           className="rounded-lg my-4"
         />
-        {/* author of the post */}
+
         <p className="text-xs text-gray-400 mt-1 mb-2 underline">
-          {data?.author.name}, {(data?.publishedAt).substring(0, 10)}
+          {data.author.name}, {data.publishedAt.substring(0, 10)}
         </p>
 
-        {/* content bloc */}
         <div className="flex flex-col lg:flex-row gap-4">
-          {/* content side*/}
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <article className="prose  prose-neutral dark:prose-invert max-w-none prose-li:marker:text-primary">
+            <article className="prose prose-neutral dark:prose-invert max-w-none prose-li:marker:text-primary">
               <PortableText
                 value={data.content}
                 components={portableTextComponents}
@@ -140,11 +169,10 @@ const BlogPost = async ({ params }: { params: { _slug: string } }) => {
             </article>
           </div>
 
-          {/* SIDEBAR */}
           <aside className="lg:w-1/3">
             <h3 className="text-xl font-semibold mb-4">You Might Also Like</h3>
             <div className="space-y-4">
-              {recentPosts.map((post: any) => (
+              {recentPosts.map((post) => (
                 <a
                   key={post.slug}
                   href={`/blog/${post.slug}`}
@@ -168,22 +196,20 @@ const BlogPost = async ({ params }: { params: { _slug: string } }) => {
           </aside>
         </div>
 
-        {data.categories?.length > 0 && (
+        {data.categories &&  data.categories.length > 0 && (
           <div className="mt-8">
             <h3 className="font-bold text-lg">Categories:</h3>
             <ul className="flex gap-2 flex-wrap">
-              {data.categories.map(
-                (category: { _id: string; name: string; slug: string }) => (
-                  <li key={category._id}>
-                    <a
-                      href={`/${category.slug}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {category.name}
-                    </a>
-                  </li>
-                )
-              )}
+              {data.categories.map((category) => (
+                <li key={category._id}>
+                  <a
+                    href={`/${category.slug}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    {category.name}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         )}
