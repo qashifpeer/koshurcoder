@@ -47,7 +47,7 @@ export default async function LatestBlogs() {
             </article>
           ))
         ) : (
-          <p>No blogs available</p>
+          <p>No blogs available at the moment</p>
         )}
       </div>
       <div className="flex justify-end mt-6">
