@@ -1,18 +1,17 @@
-import {defineConfig} from 'sanity'
-import {structureTool} from 'sanity/structure'
-import {visionTool} from '@sanity/vision'
-import {schemaTypes} from './schemaTypes'
+// import {defineConfig} from 'sanity'
+// import {structureTool} from 'sanity/structure'
+// import {schemaTypes} from './schemaTypes'
 
-export default defineConfig({
-  name: 'default',
-  title: 'koshurcoder',
+// export default defineConfig({
+//   name: 'default',
+//   title: 'koshurcoder',
 
-  projectId: 'xixdrqyb',
-  dataset: 'production',
+//   projectId: 'xixdrqyb',
+//   dataset: 'production',
 
-  plugins: [structureTool(), visionTool()],
+//   plugins: [structureTool(), ],
 
-  schema: {
-    types: schemaTypes,
-  },
-})
+//   schema: {
+//     types: schemaTypes,
+//   },
+// })
